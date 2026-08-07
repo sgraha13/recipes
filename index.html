@@ -12,7 +12,7 @@
     </style>
 </head>
 <body class="bg-neutral-950 text-neutral-100 min-h-screen selection:bg-amber-500 selection:text-black">
-    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-neutral-900 border-x border-neutral-800">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-neutral-900 border-x border-neutral-800 pb-20">
         <!-- Header -->
         <header class="p-6 bg-gradient-to-b from-amber-950/40 to-neutral-900 border-b border-neutral-800 flex items-center justify-between">
             <div>
@@ -22,13 +22,19 @@
                 <h1 class="text-2xl font-bold tracking-tight text-white">Steve’s Bar Brain</h1>
                 <p class="text-amber-500 font-medium text-xs tracking-widest uppercase mt-0.5">Your Custom Mobile Drink Menu</p>
             </div>
-            <button onclick="openAddModal()" class="w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center justify-center shadow-lg transition active:scale-95">
-                <i class="fa-solid fa-plus text-lg"></i>
-            </button>
+            <div class="flex items-center gap-2">
+                <button onclick="openShoppingListModal()" class="w-11 h-11 rounded-full bg-neutral-800 hover:bg-neutral-700 text-amber-400 font-bold flex items-center justify-center shadow-lg transition active:scale-95 border border-neutral-700 relative" title="Shopping List">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                    <span id="shoppingBadge" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button onclick="openAddModal()" class="w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center justify-center shadow-lg transition active:scale-95" title="Add Drink">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                </button>
+            </div>
         </header>
 
         <!-- Main Content -->
-        <main class="p-4 space-y-4 flex-1 pb-16">
+        <main class="p-4 space-y-4 flex-1">
             <!-- Search Bar -->
             <div class="relative">
                 <i class="fa-solid fa-search absolute left-3 top-3.5 text-neutral-500 text-sm"></i>
@@ -59,9 +65,7 @@
             
             <div id="modalViewBody" class="p-6 space-y-6">
                 <div class="flex items-center space-x-4 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800/80">
-                    <div id="modalThumbContainer" class="w-16 h-20 rounded-lg overflow-hidden shrink-0 bg-neutral-800 flex items-center justify-center border border-neutral-700">
-                        <!-- Thumbnail or Icon -->
-                    </div>
+                    <div id="modalThumbContainer" class="w-16 h-20 rounded-lg overflow-hidden shrink-0 bg-neutral-800 flex items-center justify-center border border-neutral-700"></div>
                     <div>
                         <span id="modalCategory" class="text-xs uppercase font-semibold text-amber-500 tracking-wider"></span>
                         <h3 id="modalName" class="text-xl font-bold text-white mt-0.5"></h3>
@@ -70,8 +74,11 @@
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-list text-amber-500"></i> Ingredients
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-list text-amber-500"></i> Ingredients</span>
+                        <button onclick="quickAddIngredientsToShopping()" class="text-amber-400 hover:text-amber-300 text-[11px] font-medium lowercase tracking-normal flex items-center gap-1">
+                            <i class="fa-solid fa-cart-plus"></i> add all to shopping list
+                        </button>
                     </h4>
                     <ul id="modalIngredients" class="space-y-1.5 bg-neutral-950/40 p-4 rounded-xl border border-neutral-800/80 text-sm text-neutral-300"></ul>
                 </div>
@@ -83,12 +90,22 @@
                     <ol id="modalInstructions" class="space-y-2 bg-neutral-950/40 p-4 rounded-xl border border-neutral-800/80 text-sm text-neutral-300 list-decimal list-inside"></ol>
                 </div>
 
-                <div class="pt-2 flex justify-between">
-                    <button onclick="deleteCurrentDrink()" class="px-4 py-2 bg-red-950/40 hover:bg-red-900/50 border border-red-800/60 text-red-400 text-xs font-semibold rounded-xl transition flex items-center gap-2">
-                        <i class="fa-solid fa-trash"></i> Delete Drink
+                <!-- Past Reviews Section -->
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-star text-amber-500"></i> Drink Session Logs & Reviews</span>
+                    </h4>
+                    <div id="modalReviewsList" class="space-y-3">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center border-t border-neutral-800">
+                    <button onclick="openReviewModal()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check"></i> Write Drink Review
                     </button>
-                    <button onclick="closeModal()" class="px-5 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold rounded-xl transition">
-                        Close
+                    <button onclick="deleteCurrentDrink()" class="px-3 py-2 bg-red-950/40 hover:bg-red-900/50 border border-red-800/60 text-red-400 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash"></i> Delete
                     </button>
                 </div>
             </div>
@@ -129,6 +146,108 @@
                     <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition">Save Changes</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Drink Review Session Modal -->
+    <div id="reviewModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+                <h2 id="reviewModalTitle" class="text-lg font-bold text-white">Log Drink Review</h2>
+                <button onclick="closeReviewModal()" class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="saveDrinkReview(event)" class="p-6 space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Date Made</label>
+                    <input type="date" id="reviewDate" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-500 mb-2">Rate Ingredients & Brands Used</h3>
+                    <div id="reviewIngredientsContainer" class="space-y-4 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800">
+                        <!-- Populated dynamically based on drink ingredients -->
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Overall Tasting Notes / Comments</label>
+                    <textarea id="reviewNotes" rows="2" placeholder="How did this batch turn out? Ice level, sweetness, balance..." class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeReviewModal()" class="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold rounded-xl transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition">Save Review Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Shopping List Modal -->
+    <div id="shoppingListModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                        <i class="fa-solid fa-cart-shopping text-sm"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Bar Shopping List</h2>
+                </div>
+                <button onclick="closeShoppingListModal()" class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6 flex-1 overflow-y-auto">
+                <!-- Add Item Form / Selector -->
+                <div class="bg-neutral-950/60 p-4 rounded-xl border border-neutral-800 space-y-3">
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-500">Add Item to List</h3>
+                    
+                    <div>
+                        <label class="block text-xs text-neutral-400 mb-1">Select from Previously Used Ingredients:</label>
+                        <select id="historicIngredientSelect" onchange="onHistoricIngredientSelected(this)" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                            <option value="">-- Choose from past ingredients or enter below --</option>
+                        </select>
+                    </div>
+
+                    <form onsubmit="addShoppingItem(event)" class="space-y-3 pt-2 border-t border-neutral-800/80">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="block text-[11px] uppercase font-semibold text-neutral-400 mb-1">Item Name / Brand</label>
+                                <input type="text" id="shopItemName" required placeholder="e.g. Casamigos Blanco" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] uppercase font-semibold text-neutral-400 mb-1">Est. Price</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2 text-xs text-neutral-500">$</span>
+                                    <input type="text" id="shopItemPrice" placeholder="39.99" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-6 pr-2 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <button type="button" onclick="lookupEstimatedPrice()" class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-lookup avg. price
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition">
+                                Add to List
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Active Shopping List Items -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Current Shopping List (<span id="shoppingCount">0</span>)</h3>
+                        <button onclick="clearShoppingList()" class="text-xs text-red-400 hover:text-red-300">Clear List</button>
+                    </div>
+                    <div id="shoppingItemsContainer" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -199,7 +318,8 @@
                     'Pour in the Casamigos Blanco Tequila and fresh lime juice.',
                     'Top off the glass with cold Topo Chico Sparkling Water.',
                     'Garnish with a fresh lime wedge and enjoy instantly.'
-                ]
+                ],
+                reviews: []
             },
             {
                 id: 'paloma',
@@ -220,7 +340,8 @@
                     'Fill the glass completely with fresh ice.',
                     'Combine the Reposado tequila, grapefruit juice, agave syrup, and lime juice.',
                     'Top with Topo Chico sparkling water and garnish with a grapefruit wedge.'
-                ]
+                ],
+                reviews: []
             },
             {
                 id: 'good-doctor',
@@ -240,7 +361,8 @@
                     'Pour in the Rye Whiskey and Amaro liqueur.',
                     'Top with 4 to 6 oz of chilled Dr Pepper.',
                     'Stir gently and garnish with a fresh orange wedge.'
-                ]
+                ],
+                reviews: []
             },
             {
                 id: 'red-raider',
@@ -260,7 +382,8 @@
                     'Shake vigorously until well chilled.',
                     'Strain into a chilled cocktail glass or coupe.',
                     'Garnish with a fresh lemon peel twist.'
-                ]
+                ],
+                reviews: []
             },
             {
                 id: 'kentucky-mule',
@@ -281,16 +404,20 @@
                     'Add bourbon and fill the glass with crushed ice.',
                     'Top off generously with spicy ginger beer.',
                     'Garnish with a fresh sprig of mint.'
-                ]
+                ],
+                reviews: []
             }
         ];
 
         let drinks = JSON.parse(localStorage.getItem('steves_bar_drinks')) || defaultDrinks;
+        let shoppingList = JSON.parse(localStorage.getItem('steves_bar_shopping')) || [];
         let currentActiveDrink = null;
         let tempUploadedImage = '';
+        let ingredientReviewImages = {}; // stores base64 image per ingredient index in review form
 
         function saveToStorage() {
             localStorage.setItem('steves_bar_drinks', JSON.stringify(drinks));
+            localStorage.setItem('steves_bar_shopping', JSON.stringify(shoppingList));
         }
 
         function renderDrinks(filter = '') {
@@ -337,6 +464,7 @@
                 `;
                 listContainer.appendChild(card);
             });
+            updateShoppingBadge();
         }
 
         function openModal(drink) {
@@ -354,10 +482,15 @@
             }
 
             const ingList = document.getElementById('modalIngredients');
-            ingList.innerHTML = drink.ingredients.map(i => `<li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 text-xs mt-1"></i><span>${i}</span></li>`).join('');
+            ingList.innerHTML = drink.ingredients.map(i => `<li class="flex items-start justify-between gap-2">
+                <span class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 text-xs mt-1"></i><span>${i}</span></span>
+                <button onclick="addSingleItemToShopping('${i.replace(/'/g, "\\'")}')" class="text-neutral-500 hover:text-amber-400 text-xs shrink-0" title="Add to shopping list"><i class="fa-solid fa-cart-plus"></i></button>
+            </li>`).join('');
 
             const instList = document.getElementById('modalInstructions');
             instList.innerHTML = drink.instructions.map(i => `<li class="pl-1">${i}</li>`).join('');
+
+            renderReviewsList(drink);
 
             document.getElementById('modalViewBody').classList.remove('hidden');
             document.getElementById('modalEditForm').classList.add('hidden');
@@ -369,6 +502,138 @@
         function closeModal() {
             document.getElementById('drinkModal').classList.add('hidden');
             currentActiveDrink = null;
+        }
+
+        function renderReviewsList(drink) {
+            const container = document.getElementById('modalReviewsList');
+            if (!drink.reviews || drink.reviews.length === 0) {
+                container.innerHTML = `<p class="text-xs text-neutral-500 italic bg-neutral-950/40 p-3 rounded-xl border border-neutral-800">No review logs recorded yet for this drink.</p>`;
+                return;
+            }
+
+            container.innerHTML = drink.reviews.map((rev, revIdx) => `
+                <div class="bg-neutral-950/60 p-3.5 rounded-xl border border-neutral-800 space-y-2 text-xs">
+                    <div class="flex items-center justify-between text-neutral-400 border-b border-neutral-800/80 pb-1.5">
+                        <span class="font-semibold text-amber-400"><i class="fa-regular fa-calendar mr-1"></i> ${rev.date}</span>
+                        <button onclick="deleteReview('${drink.id}', ${revIdx})" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    ${rev.notes ? `<p class="text-neutral-300 italic">"${rev.notes}"</p>` : ''}
+                    <div class="space-y-1.5 pt-1">
+                        <div class="text-[10px] uppercase font-semibold text-neutral-400 tracking-wider">Ingredient Brands & Ratings:</div>
+                        ${rev.ingredientsRated.map(item => `
+                            <div class="flex items-center justify-between bg-neutral-900 p-2 rounded-lg border border-neutral-800">
+                                <div class="flex items-center space-x-2">
+                                    ${item.image ? `<img src="${item.image}" class="w-7 h-7 rounded object-cover border border-neutral-700">` : `<div class="w-7 h-7 rounded bg-neutral-800 flex items-center justify-center text-amber-400"><i class="fa-solid fa-bottle-droplet text-xs"></i></div>`}
+                                    <div>
+                                        <div class="text-white font-medium">${item.brandName || 'Unspecified Brand'}</div>
+                                        <div class="text-[10px] text-neutral-400">Recipe: ${item.ingredientLine}</div>
+                                    </div>
+                                </div>
+                                <div class="text-amber-400 font-bold flex items-center gap-0.5">
+                                    ${item.rating} <i class="fa-solid fa-star text-[10px]"></i>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openReviewModal() {
+            if (!currentActiveDrink) return;
+            document.getElementById('reviewModalTitle').textContent = `Review: ${currentActiveDrink.name}`;
+            document.getElementById('reviewDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('reviewNotes').value = '';
+            
+            ingredientReviewImages = {};
+
+            const container = document.getElementById('reviewIngredientsContainer');
+            container.innerHTML = currentActiveDrink.ingredients.map((ing, idx) => `
+                <div class="bg-neutral-900 p-3 rounded-xl border border-neutral-800 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-white">${ing}</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">Brand Used</label>
+                            <input type="text" id="revBrand_${idx}" required placeholder="e.g. Casamigos" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">5-Star Rating</label>
+                            <select id="revRating_${idx}" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-2.5 py-1.5 text-xs text-amber-400 font-bold focus:outline-none focus:border-amber-500">
+                                <option value="5">★★★★★ (5/5)</option>
+                                <option value="4">★★★★☆ (4/5)</option>
+                                <option value="3">★★★☆☆ (3/5)</option>
+                                <option value="2">★★☆☆☆ (2/5)</option>
+                                <option value="1">★☆☆☆☆ (1/5)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-semibold text-neutral-400 mb-1">Ingredient / Bottle Photo</label>
+                        <input type="file" accept="image/*" onchange="handleReviewImageUpload(event, ${idx})" class="text-[11px] text-neutral-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-amber-500/10 file:text-amber-400 hover:file:bg-amber-500/20 cursor-pointer">
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('reviewModal').classList.remove('hidden');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.add('hidden');
+        }
+
+        function handleReviewImageUpload(event, idx) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                ingredientReviewImages[idx] = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveDrinkReview(event) {
+            event.preventDefault();
+            if (!currentActiveDrink) return;
+
+            const date = document.getElementById('reviewDate').value;
+            const notes = document.getElementById('reviewNotes').value;
+
+            const ingredientsRated = currentActiveDrink.ingredients.map((ing, idx) => {
+                const brandName = document.getElementById(`revBrand_${idx}`).value;
+                const rating = parseInt(document.getElementById(`revRating_${idx}`).value);
+                const image = ingredientReviewImages[idx] || '';
+                return {
+                    ingredientLine: ing,
+                    brandName,
+                    rating,
+                    image
+                };
+            });
+
+            const newReview = {
+                date,
+                notes,
+                ingredientsRated
+            };
+
+            if (!currentActiveDrink.reviews) currentActiveDrink.reviews = [];
+            currentActiveDrink.reviews.unshift(newReview);
+
+            saveToStorage();
+            closeReviewModal();
+            openModal(currentActiveDrink);
+        }
+
+        function deleteReview(drinkId, reviewIdx) {
+            const drink = drinks.find(d => d.id === drinkId);
+            if (!drink) return;
+            if (confirm("Delete this review session log?")) {
+                drink.reviews.splice(reviewIdx, 1);
+                saveToStorage();
+                openModal(drink);
+            }
         }
 
         function toggleEditMode() {
@@ -468,7 +733,8 @@
                 image,
                 icon: 'fa-martini-glass-citrus',
                 ingredients,
-                instructions
+                instructions,
+                reviews: []
             };
 
             drinks.push(newDrink);
@@ -480,12 +746,187 @@
             tempUploadedImage = '';
         }
 
+        // --- Shopping List Functions ---
+
+        function openShoppingListModal() {
+            populateHistoricIngredientsDropdown();
+            renderShoppingListItems();
+            document.getElementById('shoppingListModal').classList.remove('hidden');
+        }
+
+        function closeShoppingListModal() {
+            document.getElementById('shoppingListModal').classList.add('hidden');
+        }
+
+        function getAllUniqueHistoricIngredients() {
+            const set = new Set();
+            drinks.forEach(d => {
+                if (d.ingredients) d.ingredients.forEach(i => set.add(i));
+                if (d.reviews) {
+                    d.reviews.forEach(r => {
+                        if (r.ingredientsRated) {
+                            r.ingredientsRated.forEach(ir => {
+                                if (ir.brandName) set.add(ir.brandName);
+                            });
+                        }
+                    });
+                }
+            });
+            return Array.from(set);
+        }
+
+        function populateHistoricIngredientsDropdown() {
+            const select = document.getElementById('historicIngredientSelect');
+            const items = getAllUniqueHistoricIngredients();
+            select.innerHTML = `<option value="">-- Choose from past ingredients or enter below --</option>` + 
+                items.map(item => `<option value="${item}">${item}</option>`).join('');
+        }
+
+        function onHistoricIngredientSelected(select) {
+            if (select.value) {
+                document.getElementById('shopItemName').value = select.value;
+                // Automatically run a simulated lookup price
+                document.getElementById('shopItemPrice').value = estimatePriceForItem(select.value);
+            }
+        }
+
+        function estimatePriceForItem(itemName) {
+            const lower = itemName.toLowerCase();
+            if (lower.includes('tequila') || lower.includes('casamigos') || lower.includes('bourbon') || lower.includes('whiskey')) return '39.99';
+            if (lower.includes('amaro') || lower.includes('cointreau')) return '32.50';
+            if (lower.includes('topo chico') || lower.includes('water') || lower.includes('soda') || lower.includes('dr pepper')) return '7.99';
+            if (lower.includes('lime') || lower.includes('lemon') || lower.includes('mint')) return '4.49';
+            return '15.99';
+        }
+
+        function lookupEstimatedPrice() {
+            const itemName = document.getElementById('shopItemName').value;
+            if (!itemName) {
+                alert("Please enter or select an item name first.");
+                return;
+            }
+            document.getElementById('shopItemPrice').value = estimatePriceForItem(itemName);
+        }
+
+        function addShoppingItem(event) {
+            event.preventDefault();
+            const name = document.getElementById('shopItemName').value;
+            const price = document.getElementById('shopItemPrice').value || '0.00';
+
+            shoppingList.push({
+                id: 'shop-' + Date.now(),
+                name,
+                price: parseFloat(price).toFixed(2),
+                checked: false
+            });
+
+            saveToStorage();
+            renderShoppingListItems();
+            updateShoppingBadge();
+
+            document.getElementById('shopItemName').value = '';
+            document.getElementById('shopItemPrice').value = '';
+            document.getElementById('historicIngredientSelect').selectedIndex = 0;
+        }
+
+        function addSingleItemToShopping(itemText) {
+            shoppingList.push({
+                id: 'shop-' + Date.now(),
+                name: itemText,
+                price: estimatePriceForItem(itemText),
+                checked: false
+            });
+            saveToStorage();
+            updateShoppingBadge();
+            alert(`Added "${itemText}" to your shopping list!`);
+        }
+
+        function quickAddIngredientsToShopping() {
+            if (!currentActiveDrink) return;
+            currentActiveDrink.ingredients.forEach(i => {
+                shoppingList.push({
+                    id: 'shop-' + Date.now() + Math.random(),
+                    name: i,
+                    price: estimatePriceForItem(i),
+                    checked: false
+                });
+            });
+            saveToStorage();
+            updateShoppingBadge();
+            alert(`All ingredients for ${currentActiveDrink.name} added to your shopping list!`);
+        }
+
+        function toggleShoppingItem(id) {
+            const item = shoppingList.find(s => s.id === id);
+            if (item) {
+                item.checked = !item.checked;
+                saveToStorage();
+                renderShoppingListItems();
+            }
+        }
+
+        function deleteShoppingItem(id) {
+            shoppingList = shoppingList.filter(s => s.id !== id);
+            saveToStorage();
+            renderShoppingListItems();
+            updateShoppingBadge();
+        }
+
+        function clearShoppingList() {
+            if (confirm("Clear all items from the shopping list?")) {
+                shoppingList = [];
+                saveToStorage();
+                renderShoppingListItems();
+                updateShoppingBadge();
+            }
+        }
+
+        function renderShoppingListItems() {
+            const container = document.getElementById('shoppingItemsContainer');
+            document.getElementById('shoppingCount').textContent = shoppingList.length;
+
+            if (shoppingList.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-neutral-500 text-xs bg-neutral-950/40 rounded-xl border border-neutral-800">Your shopping list is empty. Add items above!</div>`;
+                return;
+            }
+
+            container.innerHTML = shoppingList.map(item => `
+                <div class="bg-neutral-950/60 p-3 rounded-xl border border-neutral-800 flex items-center justify-between text-sm">
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleShoppingItem('${item.id}')" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                        <span class="${item.checked ? 'line-through text-neutral-500' : 'text-white'} font-medium">${item.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs text-amber-400 font-semibold">$${item.price}</span>
+                        <button onclick="deleteShoppingItem('${item.id}')" class="text-neutral-500 hover:text-red-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateShoppingBadge() {
+            const badge = document.getElementById('shoppingBadge');
+            if (shoppingList.length > 0) {
+                badge.textContent = shoppingList.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
         document.getElementById('searchInput').addEventListener('input', (e) => {
             renderDrinks(e.target.value);
         });
 
+        // Close modals on background click
         document.getElementById('drinkModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('drinkModal')) closeModal();
+        });
+        document.getElementById('reviewModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('reviewModal')) closeReviewModal();
+        });
+        document.getElementById('shoppingListModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('shoppingListModal')) closeShoppingListModal();
         });
         document.getElementById('addModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('addModal')) closeAddModal();
