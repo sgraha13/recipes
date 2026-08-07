@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Outfit', sans-serif; }
         .bg-custom-bar {
-            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.82), rgba(10, 10, 10, 0.94)), url('images/whiskey-phoenix.png');
+            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.85), rgba(10, 10, 10, 0.95)), url('images/whiskey-phoenix.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -29,6 +29,9 @@
                 <p class="text-amber-400 font-medium text-xs tracking-widest uppercase mt-0.5">Your Custom Mobile Drink Menu</p>
             </div>
             <div class="flex items-center gap-2">
+                <button onclick="forceRefreshApp()" class="w-10 h-10 rounded-full bg-neutral-900/90 hover:bg-neutral-800 text-amber-400 flex items-center justify-center shadow-lg transition active:scale-95 border border-neutral-700" title="Check for updates / Hard Reload">
+                    <i class="fa-solid fa-rotate text-xs"></i>
+                </button>
                 <button onclick="openShoppingListModal()" class="w-11 h-11 rounded-full bg-neutral-900/90 hover:bg-neutral-800 text-amber-400 font-bold flex items-center justify-center shadow-lg transition active:scale-95 border border-neutral-700 relative" title="Shopping List">
                     <i class="fa-solid fa-cart-shopping text-sm"></i>
                     <span id="shoppingBadge" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
@@ -174,7 +177,7 @@
                 <div>
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-500 mb-2">Rate Ingredients & Brands Used</h3>
                     <div id="reviewIngredientsContainer" class="space-y-4 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800">
-                        <!-- Populated dynamically based on drink ingredients -->
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
 
@@ -424,6 +427,13 @@
         function saveToStorage() {
             localStorage.setItem('steves_bar_drinks', JSON.stringify(drinks));
             localStorage.setItem('steves_bar_shopping', JSON.stringify(shoppingList));
+        }
+
+        // Force refresh app and bypass cache to fetch latest Git updates
+        function forceRefreshApp() {
+            if (confirm("Check for latest updates from Git and reload app? (Your saved reviews and shopping list will be kept)")) {
+                window.location.reload(true);
+            }
         }
 
         function renderDrinks(filter = '') {
