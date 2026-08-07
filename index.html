@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steve’s Bar Brain</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; }
+    </style>
+</head>
+<body class="bg-neutral-950 text-neutral-100 min-h-screen selection:bg-amber-500 selection:text-black">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-neutral-900 border-x border-neutral-800">
+        <!-- Header -->
+        <header class="p-6 bg-gradient-to-b from-amber-950/40 to-neutral-900 border-b border-neutral-800 flex items-center justify-between">
+            <div>
+                <div class="inline-flex items-center justify-center p-2.5 bg-amber-500/10 rounded-full text-amber-500 mb-1 border border-amber-500/20">
+                    <i class="fa-solid fa-martini-glass-citrus text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">Steve’s Bar Brain</h1>
+                <p class="text-amber-500 font-medium text-xs tracking-widest uppercase mt-0.5">Your Custom Mobile Drink Menu</p>
+            </div>
+            <button onclick="openAddModal()" class="w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center justify-center shadow-lg transition active:scale-95">
+                <i class="fa-solid fa-plus text-lg"></i>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-4 space-y-4 flex-1 pb-16">
+            <!-- Search Bar -->
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-3 top-3.5 text-neutral-500 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Search drinks, spirits, ingredients..." 
+                    class="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-10 pr-4 py-3 text-sm text-neutral-200 focus:outline-none focus:border-amber-500 transition">
+            </div>
+
+            <div id="drinkList" class="space-y-4">
+                <!-- Drinks populated dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- View/Edit Drink Modal -->
+    <div id="drinkModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+                <h2 id="modalHeaderTitle" class="text-xl font-bold text-white">Drink Details</h2>
+                <div class="flex items-center gap-2">
+                    <button id="editToggleBtn" onclick="toggleEditMode()" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-400 text-xs font-semibold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </button>
+                    <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="modalViewBody" class="p-6 space-y-6">
+                <div class="flex items-center space-x-4 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800/80">
+                    <div id="modalThumbContainer" class="w-16 h-20 rounded-lg overflow-hidden shrink-0 bg-neutral-800 flex items-center justify-center border border-neutral-700">
+                        <!-- Thumbnail or Icon -->
+                    </div>
+                    <div>
+                        <span id="modalCategory" class="text-xs uppercase font-semibold text-amber-500 tracking-wider"></span>
+                        <h3 id="modalName" class="text-xl font-bold text-white mt-0.5"></h3>
+                        <p id="modalBottle" class="text-xs text-neutral-400 mt-0.5"></p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-list text-amber-500"></i> Ingredients
+                    </h4>
+                    <ul id="modalIngredients" class="space-y-1.5 bg-neutral-950/40 p-4 rounded-xl border border-neutral-800/80 text-sm text-neutral-300"></ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-blender text-amber-500"></i> Instructions
+                    </h4>
+                    <ol id="modalInstructions" class="space-y-2 bg-neutral-950/40 p-4 rounded-xl border border-neutral-800/80 text-sm text-neutral-300 list-decimal list-inside"></ol>
+                </div>
+
+                <div class="pt-2 flex justify-between">
+                    <button onclick="deleteCurrentDrink()" class="px-4 py-2 bg-red-950/40 hover:bg-red-900/50 border border-red-800/60 text-red-400 text-xs font-semibold rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-trash"></i> Delete Drink
+                    </button>
+                    <button onclick="closeModal()" class="px-5 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold rounded-xl transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+
+            <!-- Edit Form Container (Hidden by default) -->
+            <form id="modalEditForm" onsubmit="saveDrinkEdit(event)" class="p-6 space-y-4 hidden">
+                <input type="hidden" id="editDrinkId">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Drink Name</label>
+                    <input type="text" id="editName" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Category</label>
+                        <input type="text" id="editCategory" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Key Spirit / Bottle</label>
+                        <input type="text" id="editBottle" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Image / Bottle Photo URL</label>
+                    <input type="url" id="editImage" placeholder="https://example.com/bottle.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    <p class="text-[11px] text-neutral-500 mt-1">Or upload an image file directly:</p>
+                    <input type="file" id="editImageFile" accept="image/*" onchange="handleImageUpload(event, 'edit')" class="mt-1 text-xs text-neutral-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-400 hover:file:bg-amber-500/20 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Ingredients (one per line)</label>
+                    <textarea id="editIngredients" rows="3" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Instructions (one step per line)</label>
+                    <textarea id="editInstructions" rows="3" required class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="toggleEditMode()" class="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold rounded-xl transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add New Drink Modal -->
+    <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+                <h2 class="text-xl font-bold text-white">Add New Drink</h2>
+                <button onclick="closeAddModal()" class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form onsubmit="addNewDrink(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Drink Name</label>
+                    <input type="text" id="addName" required placeholder="e.g. Old Fashioned" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Category</label>
+                        <input type="text" id="addCategory" required placeholder="e.g. Classic" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Key Spirit / Bottle</label>
+                        <input type="text" id="addBottle" required placeholder="e.g. Bourbon" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Bottle Image / Photo URL</label>
+                    <input type="url" id="addImage" placeholder="https://example.com/bottle.jpg" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                    <p class="text-[11px] text-neutral-500 mt-1">Or upload an image file from your device:</p>
+                    <input type="file" id="addImageFile" accept="image/*" onchange="handleImageUpload(event, 'add')" class="mt-1 text-xs text-neutral-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-400 hover:file:bg-amber-500/20 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Ingredients (one per line)</label>
+                    <textarea id="addIngredients" rows="3" required placeholder="2 oz Bourbon&#10;0.5 oz Simple Syrup&#10;Angostura Bitters" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Instructions (one step per line)</label>
+                    <textarea id="addInstructions" rows="3" required placeholder="Add ingredients to glass with ice&#10;Stir well&#10;Garnish with orange peel" class="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold rounded-xl transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition">Add Drink</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const defaultDrinks = [
+            {
+                id: 'ranch-water',
+                name: 'Ranch Water',
+                category: 'Refreshing & Crisp',
+                bottle: 'Casamigos Blanco Tequila',
+                image: '',
+                icon: 'fa-bottle-droplet',
+                ingredients: [
+                    '2–3 oz Casamigos Blanco Tequila',
+                    '1 oz Fresh lime juice',
+                    'Top with Topo Chico Sparkling Water',
+                    'Garnish with a lime wedge'
+                ],
+                instructions: [
+                    'Fill a tall glass generously with ice cubes.',
+                    'Pour in the Casamigos Blanco Tequila and fresh lime juice.',
+                    'Top off the glass with cold Topo Chico Sparkling Water.',
+                    'Garnish with a fresh lime wedge and enjoy instantly.'
+                ]
+            },
+            {
+                id: 'paloma',
+                name: 'Paloma',
+                category: 'Citrus & Vibrant',
+                bottle: 'Casamigos Reposado Tequila',
+                image: '',
+                icon: 'fa-wine-bottle',
+                ingredients: [
+                    '2 oz Casamigos Reposado Tequila',
+                    '2.5 oz Fresh grapefruit juice',
+                    '0.5 oz Agave syrup',
+                    '0.5 oz Lime juice',
+                    'Top with Topo Chico Sparkling Water'
+                ],
+                instructions: [
+                    'Rim your glass with a 50/50 salt and sugar mixture.',
+                    'Fill the glass completely with fresh ice.',
+                    'Combine the Reposado tequila, grapefruit juice, agave syrup, and lime juice.',
+                    'Top with Topo Chico sparkling water and garnish with a grapefruit wedge.'
+                ]
+            },
+            {
+                id: 'good-doctor',
+                name: 'The Good Doctor',
+                category: 'Spicy & Bold Highball',
+                bottle: 'Rye Whiskey & Amaro',
+                image: '',
+                icon: 'fa-whiskey-glass',
+                ingredients: [
+                    '1.5 oz Rye Whiskey',
+                    '1.5 oz Amaro (e.g., Amaro Montenegro)',
+                    '4–6 oz Dr Pepper',
+                    'Garnish with an orange wedge'
+                ],
+                instructions: [
+                    'Fill your glass with quality ice.',
+                    'Pour in the Rye Whiskey and Amaro liqueur.',
+                    'Top with 4 to 6 oz of chilled Dr Pepper.',
+                    'Stir gently and garnish with a fresh orange wedge.'
+                ]
+            },
+            {
+                id: 'red-raider',
+                name: 'Red Raider',
+                category: 'Tart & Sophisticated',
+                bottle: 'Bourbon & Cointreau',
+                image: '',
+                icon: 'fa-cube',
+                ingredients: [
+                    '1.5 oz Bourbon',
+                    '0.75 oz Lemon juice',
+                    '0.5 oz Cointreau',
+                    '0.5 oz High-quality Grenadine'
+                ],
+                instructions: [
+                    'Add all ingredients into a cocktail shaker filled with ice.',
+                    'Shake vigorously until well chilled.',
+                    'Strain into a chilled cocktail glass or coupe.',
+                    'Garnish with a fresh lemon peel twist.'
+                ]
+            },
+            {
+                id: 'kentucky-mule',
+                name: 'Kentucky Mule',
+                category: 'Fizzy & Zingy',
+                bottle: 'Bourbon & Ginger Beer',
+                image: '',
+                icon: 'fa-mug-hot',
+                ingredients: [
+                    '2 oz Bourbon',
+                    '0.5 oz Lime juice',
+                    '0.25 oz Simple syrup',
+                    '2 fresh mint leaves',
+                    'Top off with Spicy Ginger Beer'
+                ],
+                instructions: [
+                    'Gently muddle mint leaves with lime juice and simple syrup in your glass.',
+                    'Add bourbon and fill the glass with crushed ice.',
+                    'Top off generously with spicy ginger beer.',
+                    'Garnish with a fresh sprig of mint.'
+                ]
+            }
+        ];
+
+        let drinks = JSON.parse(localStorage.getItem('steves_bar_drinks')) || defaultDrinks;
+        let currentActiveDrink = null;
+        let tempUploadedImage = '';
+
+        function saveToStorage() {
+            localStorage.setItem('steves_bar_drinks', JSON.stringify(drinks));
+        }
+
+        function renderDrinks(filter = '') {
+            const listContainer = document.getElementById('drinkList');
+            listContainer.innerHTML = '';
+
+            const filtered = drinks.filter(d => 
+                d.name.toLowerCase().includes(filter.toLowerCase()) || 
+                d.bottle.toLowerCase().includes(filter.toLowerCase()) ||
+                d.category.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-12 text-neutral-500 text-sm">No drinks found matching your search.</div>`;
+                return;
+            }
+
+            filtered.forEach(drink => {
+                const card = document.createElement('div');
+                card.className = "bg-neutral-900 border border-neutral-800 hover:border-amber-500/50 rounded-2xl p-4 transition cursor-pointer flex items-center justify-between group";
+                card.onclick = () => openModal(drink);
+
+                let thumbHtml = '';
+                if (drink.image) {
+                    thumbHtml = `<img src="${drink.image}" class="w-full h-full object-cover">`;
+                } else {
+                    thumbHtml = `<div class="w-full h-full bg-neutral-800 text-amber-400 flex items-center justify-center text-xl"><i class="fa-solid ${drink.icon || 'fa-martini-glass'}"></i></div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-neutral-700 shadow-inner">
+                            ${thumbHtml}
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-medium uppercase tracking-wider text-amber-500/90">${drink.category}</span>
+                            <h3 class="text-base font-semibold text-white group-hover:text-amber-400 transition">${drink.name}</h3>
+                            <p class="text-xs text-neutral-400 mt-0.5 line-clamp-1">Spirit: ${drink.bottle}</p>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 group-hover:bg-amber-500 group-hover:text-black transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function openModal(drink) {
+            currentActiveDrink = drink;
+            document.getElementById('modalHeaderTitle').textContent = drink.name;
+            document.getElementById('modalCategory').textContent = drink.category;
+            document.getElementById('modalName').textContent = drink.name;
+            document.getElementById('modalBottle').textContent = 'Spirit: ' + drink.bottle;
+
+            const thumbContainer = document.getElementById('modalThumbContainer');
+            if (drink.image) {
+                thumbContainer.innerHTML = `<img src="${drink.image}" class="w-full h-full object-cover">`;
+            } else {
+                thumbContainer.innerHTML = `<div class="text-amber-400 text-2xl"><i class="fa-solid ${drink.icon || 'fa-martini-glass'}"></i></div>`;
+            }
+
+            const ingList = document.getElementById('modalIngredients');
+            ingList.innerHTML = drink.ingredients.map(i => `<li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 text-xs mt-1"></i><span>${i}</span></li>`).join('');
+
+            const instList = document.getElementById('modalInstructions');
+            instList.innerHTML = drink.instructions.map(i => `<li class="pl-1">${i}</li>`).join('');
+
+            document.getElementById('modalViewBody').classList.remove('hidden');
+            document.getElementById('modalEditForm').classList.add('hidden');
+            document.getElementById('editToggleBtn').innerHTML = `<i class="fa-solid fa-pen"></i> Edit`;
+
+            document.getElementById('drinkModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('drinkModal').classList.add('hidden');
+            currentActiveDrink = null;
+        }
+
+        function toggleEditMode() {
+            const viewBody = document.getElementById('modalViewBody');
+            const editForm = document.getElementById('modalEditForm');
+            const toggleBtn = document.getElementById('editToggleBtn');
+
+            if (viewBody.classList.contains('hidden')) {
+                viewBody.classList.remove('hidden');
+                editForm.classList.add('hidden');
+                toggleBtn.innerHTML = `<i class="fa-solid fa-pen"></i> Edit`;
+            } else {
+                if (!currentActiveDrink) return;
+                viewBody.classList.add('hidden');
+                editForm.classList.remove('hidden');
+                toggleBtn.innerHTML = `<i class="fa-solid fa-eye"></i> View`;
+
+                document.getElementById('editDrinkId').value = currentActiveDrink.id;
+                document.getElementById('editName').value = currentActiveDrink.name;
+                document.getElementById('editCategory').value = currentActiveDrink.category;
+                document.getElementById('editBottle').value = currentActiveDrink.bottle;
+                document.getElementById('editImage').value = currentActiveDrink.image || '';
+                document.getElementById('editIngredients').value = currentActiveDrink.ingredients.join('\n');
+                document.getElementById('editInstructions').value = currentActiveDrink.instructions.join('\n');
+                tempUploadedImage = currentActiveDrink.image || '';
+            }
+        }
+
+        function handleImageUpload(event, mode) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tempUploadedImage = e.target.result;
+                if (mode === 'edit') {
+                    document.getElementById('editImage').value = tempUploadedImage;
+                } else {
+                    document.getElementById('addImage').value = tempUploadedImage;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveDrinkEdit(event) {
+            event.preventDefault();
+            if (!currentActiveDrink) return;
+
+            const id = document.getElementById('editDrinkId').value;
+            const idx = drinks.findIndex(d => d.id === id);
+            if (idx === -1) return;
+
+            drinks[idx].name = document.getElementById('editName').value;
+            drinks[idx].category = document.getElementById('editCategory').value;
+            drinks[idx].bottle = document.getElementById('editBottle').value;
+            drinks[idx].image = document.getElementById('editImage').value || tempUploadedImage;
+            drinks[idx].ingredients = document.getElementById('editIngredients').value.split('\n').filter(i => i.trim() !== '');
+            drinks[idx].instructions = document.getElementById('editInstructions').value.split('\n').filter(i => i.trim() !== '');
+
+            saveToStorage();
+            renderDrinks(document.getElementById('searchInput').value);
+            openModal(drinks[idx]);
+        }
+
+        function deleteCurrentDrink() {
+            if (!currentActiveDrink) return;
+            if (confirm(`Are you sure you want to delete ${currentActiveDrink.name}?`)) {
+                drinks = drinks.filter(d => d.id !== currentActiveDrink.id);
+                saveToStorage();
+                closeModal();
+                renderDrinks(document.getElementById('searchInput').value);
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('addImageFile').value = '';
+            document.getElementById('addModal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function addNewDrink(event) {
+            event.preventDefault();
+            const name = document.getElementById('addName').value;
+            const category = document.getElementById('addCategory').value;
+            const bottle = document.getElementById('addBottle').value;
+            const image = document.getElementById('addImage').value || tempUploadedImage;
+            const ingredients = document.getElementById('addIngredients').value.split('\n').filter(i => i.trim() !== '');
+            const instructions = document.getElementById('addInstructions').value.split('\n').filter(i => i.trim() !== '');
+
+            const newDrink = {
+                id: 'drink-' + Date.now(),
+                name,
+                category,
+                bottle,
+                image,
+                icon: 'fa-martini-glass-citrus',
+                ingredients,
+                instructions
+            };
+
+            drinks.push(newDrink);
+            saveToStorage();
+            closeAddModal();
+            renderDrinks();
+            
+            event.target.reset();
+            tempUploadedImage = '';
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderDrinks(e.target.value);
+        });
+
+        document.getElementById('drinkModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('drinkModal')) closeModal();
+        });
+        document.getElementById('addModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('addModal')) closeAddModal();
+        });
+
+        renderDrinks();
+    </script>
+</body>
+</html>
