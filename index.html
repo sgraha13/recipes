@@ -9,21 +9,27 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Outfit', sans-serif; }
+        .bg-custom-bar {
+            background-image: linear-gradient(to bottom, rgba(5, 5, 5, 0.82), rgba(10, 10, 10, 0.94)), url('images/whiskey-phoenix.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
     </style>
 </head>
-<body class="bg-neutral-950 text-neutral-100 min-h-screen selection:bg-amber-500 selection:text-black">
-    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-neutral-900 border-x border-neutral-800 pb-20">
+<body class="bg-custom-bar text-neutral-100 min-h-screen selection:bg-amber-500 selection:text-black">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-neutral-950/80 backdrop-blur-md border-x border-neutral-800 pb-20">
         <!-- Header -->
-        <header class="p-6 bg-gradient-to-b from-amber-950/40 to-neutral-900 border-b border-neutral-800 flex items-center justify-between">
+        <header class="p-6 bg-gradient-to-b from-amber-950/60 to-neutral-950/60 border-b border-neutral-800/80 flex items-center justify-between">
             <div>
                 <div class="inline-flex items-center justify-center p-2.5 bg-amber-500/10 rounded-full text-amber-500 mb-1 border border-amber-500/20">
                     <i class="fa-solid fa-martini-glass-citrus text-xl"></i>
                 </div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">Steve’s Bar Brain</h1>
-                <p class="text-amber-500 font-medium text-xs tracking-widest uppercase mt-0.5">Your Custom Mobile Drink Menu</p>
+                <h1 class="text-2xl font-bold tracking-tight text-white drop-shadow">Steve’s Bar Brain</h1>
+                <p class="text-amber-400 font-medium text-xs tracking-widest uppercase mt-0.5">Your Custom Mobile Drink Menu</p>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="openShoppingListModal()" class="w-11 h-11 rounded-full bg-neutral-800 hover:bg-neutral-700 text-amber-400 font-bold flex items-center justify-center shadow-lg transition active:scale-95 border border-neutral-700 relative" title="Shopping List">
+                <button onclick="openShoppingListModal()" class="w-11 h-11 rounded-full bg-neutral-900/90 hover:bg-neutral-800 text-amber-400 font-bold flex items-center justify-center shadow-lg transition active:scale-95 border border-neutral-700 relative" title="Shopping List">
                     <i class="fa-solid fa-cart-shopping text-sm"></i>
                     <span id="shoppingBadge" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
                 </button>
@@ -37,9 +43,9 @@
         <main class="p-4 space-y-4 flex-1">
             <!-- Search Bar -->
             <div class="relative">
-                <i class="fa-solid fa-search absolute left-3 top-3.5 text-neutral-500 text-sm"></i>
+                <i class="fa-solid fa-search absolute left-3 top-3.5 text-neutral-400 text-sm"></i>
                 <input type="text" id="searchInput" placeholder="Search drinks, spirits, ingredients..." 
-                    class="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-10 pr-4 py-3 text-sm text-neutral-200 focus:outline-none focus:border-amber-500 transition">
+                    class="w-full bg-neutral-900/80 backdrop-blur border border-neutral-800 rounded-xl pl-10 pr-4 py-3 text-sm text-neutral-200 focus:outline-none focus:border-amber-500 transition shadow-inner">
             </div>
 
             <div id="drinkList" class="space-y-4">
@@ -49,9 +55,9 @@
     </div>
 
     <!-- View/Edit Drink Modal -->
-    <div id="drinkModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+    <div id="drinkModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900/95 backdrop-blur border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-neutral-900/95 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
                 <h2 id="modalHeaderTitle" class="text-xl font-bold text-white">Drink Details</h2>
                 <div class="flex items-center gap-2">
                     <button id="editToggleBtn" onclick="toggleEditMode()" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-400 text-xs font-semibold transition flex items-center gap-1.5">
@@ -64,7 +70,7 @@
             </div>
             
             <div id="modalViewBody" class="p-6 space-y-6">
-                <div class="flex items-center space-x-4 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800/80">
+                <div class="flex items-center space-x-4 bg-neutral-950/70 p-4 rounded-xl border border-neutral-800">
                     <div id="modalThumbContainer" class="w-16 h-20 rounded-lg overflow-hidden shrink-0 bg-neutral-800 flex items-center justify-center border border-neutral-700"></div>
                     <div>
                         <span id="modalCategory" class="text-xs uppercase font-semibold text-amber-500 tracking-wider"></span>
@@ -80,14 +86,14 @@
                             <i class="fa-solid fa-cart-plus"></i> add all to shopping list
                         </button>
                     </h4>
-                    <ul id="modalIngredients" class="space-y-1.5 bg-neutral-950/40 p-4 rounded-xl border border-neutral-800/80 text-sm text-neutral-300"></ul>
+                    <ul id="modalIngredients" class="space-y-1.5 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800 text-sm text-neutral-300"></ul>
                 </div>
 
                 <div>
                     <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 flex items-center gap-2">
                         <i class="fa-solid fa-blender text-amber-500"></i> Instructions
                     </h4>
-                    <ol id="modalInstructions" class="space-y-2 bg-neutral-950/40 p-4 rounded-xl border border-neutral-800/80 text-sm text-neutral-300 list-decimal list-inside"></ol>
+                    <ol id="modalInstructions" class="space-y-2 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800 text-sm text-neutral-300 list-decimal list-inside"></ol>
                 </div>
 
                 <!-- Past Reviews Section -->
@@ -101,7 +107,7 @@
                 </div>
 
                 <div class="pt-2 flex justify-between items-center border-t border-neutral-800">
-                    <button onclick="openReviewModal()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition flex items-center gap-2">
+                    <button onclick="openReviewModal()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition flex items-center gap-2 shadow">
                         <i class="fa-solid fa-clipboard-check"></i> Write Drink Review
                     </button>
                     <button onclick="deleteCurrentDrink()" class="px-3 py-2 bg-red-950/40 hover:bg-red-900/50 border border-red-800/60 text-red-400 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
@@ -150,9 +156,9 @@
     </div>
 
     <!-- Drink Review Session Modal -->
-    <div id="reviewModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+    <div id="reviewModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900/95 backdrop-blur border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-neutral-900/95 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
                 <h2 id="reviewModalTitle" class="text-lg font-bold text-white">Log Drink Review</h2>
                 <button onclick="closeReviewModal()" class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -167,7 +173,7 @@
 
                 <div>
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-500 mb-2">Rate Ingredients & Brands Used</h3>
-                    <div id="reviewIngredientsContainer" class="space-y-4 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800">
+                    <div id="reviewIngredientsContainer" class="space-y-4 bg-neutral-950/60 p-4 rounded-xl border border-neutral-800">
                         <!-- Populated dynamically based on drink ingredients -->
                     </div>
                 </div>
@@ -186,9 +192,9 @@
     </div>
 
     <!-- Shopping List Modal -->
-    <div id="shoppingListModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
-            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+    <div id="shoppingListModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900/95 backdrop-blur border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+            <div class="sticky top-0 bg-neutral-900/95 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
                         <i class="fa-solid fa-cart-shopping text-sm"></i>
@@ -202,7 +208,7 @@
 
             <div class="p-6 space-y-6 flex-1 overflow-y-auto">
                 <!-- Add Item Form / Selector -->
-                <div class="bg-neutral-950/60 p-4 rounded-xl border border-neutral-800 space-y-3">
+                <div class="bg-neutral-950/70 p-4 rounded-xl border border-neutral-800 space-y-3">
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-amber-500">Add Item to List</h3>
                     
                     <div>
@@ -230,7 +236,7 @@
                             <button type="button" onclick="lookupEstimatedPrice()" class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-lookup avg. price
                             </button>
-                            <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition">
+                            <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-xl transition shadow">
                                 Add to List
                             </button>
                         </div>
@@ -252,9 +258,9 @@
     </div>
 
     <!-- Add New Drink Modal -->
-    <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-neutral-900 border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="sticky top-0 bg-neutral-900/90 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
+    <div id="addModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-neutral-900/95 backdrop-blur border-t sm:border border-neutral-800 w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="sticky top-0 bg-neutral-900/95 backdrop-blur px-6 py-4 border-b border-neutral-800 flex items-center justify-between z-10">
                 <h2 class="text-xl font-bold text-white">Add New Drink</h2>
                 <button onclick="closeAddModal()" class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -413,7 +419,7 @@
         let shoppingList = JSON.parse(localStorage.getItem('steves_bar_shopping')) || [];
         let currentActiveDrink = null;
         let tempUploadedImage = '';
-        let ingredientReviewImages = {}; // stores base64 image per ingredient index in review form
+        let ingredientReviewImages = {};
 
         function saveToStorage() {
             localStorage.setItem('steves_bar_drinks', JSON.stringify(drinks));
@@ -431,13 +437,13 @@
             );
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = `<div class="text-center py-12 text-neutral-500 text-sm">No drinks found matching your search.</div>`;
+                listContainer.innerHTML = `<div class="text-center py-12 text-neutral-400 text-sm bg-neutral-900/60 rounded-2xl border border-neutral-800 backdrop-blur">No drinks found matching your search.</div>`;
                 return;
             }
 
             filtered.forEach(drink => {
                 const card = document.createElement('div');
-                card.className = "bg-neutral-900 border border-neutral-800 hover:border-amber-500/50 rounded-2xl p-4 transition cursor-pointer flex items-center justify-between group";
+                card.className = "bg-neutral-900/80 backdrop-blur-md border border-neutral-800 hover:border-amber-500/50 rounded-2xl p-4 transition cursor-pointer flex items-center justify-between group shadow-lg";
                 card.onclick = () => openModal(drink);
 
                 let thumbHtml = '';
@@ -453,12 +459,12 @@
                             ${thumbHtml}
                         </div>
                         <div>
-                            <span class="text-[11px] font-medium uppercase tracking-wider text-amber-500/90">${drink.category}</span>
-                            <h3 class="text-base font-semibold text-white group-hover:text-amber-400 transition">${drink.name}</h3>
+                            <span class="text-[11px] font-medium uppercase tracking-wider text-amber-400/90">${drink.category}</span>
+                            <h3 class="text-base font-semibold text-white group-hover:text-amber-300 transition">${drink.name}</h3>
                             <p class="text-xs text-neutral-400 mt-0.5 line-clamp-1">Spirit: ${drink.bottle}</p>
                         </div>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-400 group-hover:bg-amber-500 group-hover:text-black transition">
+                    <div class="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center text-neutral-300 group-hover:bg-amber-500 group-hover:text-black transition">
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </div>
                 `;
@@ -484,7 +490,7 @@
             const ingList = document.getElementById('modalIngredients');
             ingList.innerHTML = drink.ingredients.map(i => `<li class="flex items-start justify-between gap-2">
                 <span class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 text-xs mt-1"></i><span>${i}</span></span>
-                <button onclick="addSingleItemToShopping('${i.replace(/'/g, "\\'")}')" class="text-neutral-500 hover:text-amber-400 text-xs shrink-0" title="Add to shopping list"><i class="fa-solid fa-cart-plus"></i></button>
+                <button onclick="event.stopPropagation(); addSingleItemToShopping('${i.replace(/'/g, "\\'")}')" class="text-neutral-500 hover:text-amber-400 text-xs shrink-0" title="Add to shopping list"><i class="fa-solid fa-cart-plus"></i></button>
             </li>`).join('');
 
             const instList = document.getElementById('modalInstructions');
@@ -507,13 +513,13 @@
         function renderReviewsList(drink) {
             const container = document.getElementById('modalReviewsList');
             if (!drink.reviews || drink.reviews.length === 0) {
-                container.innerHTML = `<p class="text-xs text-neutral-500 italic bg-neutral-950/40 p-3 rounded-xl border border-neutral-800">No review logs recorded yet for this drink.</p>`;
+                container.innerHTML = `<p class="text-xs text-neutral-400 italic bg-neutral-950/40 p-3 rounded-xl border border-neutral-800">No review logs recorded yet for this drink.</p>`;
                 return;
             }
 
             container.innerHTML = drink.reviews.map((rev, revIdx) => `
-                <div class="bg-neutral-950/60 p-3.5 rounded-xl border border-neutral-800 space-y-2 text-xs">
-                    <div class="flex items-center justify-between text-neutral-400 border-b border-neutral-800/80 pb-1.5">
+                <div class="bg-neutral-950/70 p-3.5 rounded-xl border border-neutral-800 space-y-2 text-xs">
+                    <div class="flex items-center justify-between text-neutral-400 border-b border-neutral-800 pb-1.5">
                         <span class="font-semibold text-amber-400"><i class="fa-regular fa-calendar mr-1"></i> ${rev.date}</span>
                         <button onclick="deleteReview('${drink.id}', ${revIdx})" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -521,7 +527,7 @@
                     <div class="space-y-1.5 pt-1">
                         <div class="text-[10px] uppercase font-semibold text-neutral-400 tracking-wider">Ingredient Brands & Ratings:</div>
                         ${rev.ingredientsRated.map(item => `
-                            <div class="flex items-center justify-between bg-neutral-900 p-2 rounded-lg border border-neutral-800">
+                            <div class="flex items-center justify-between bg-neutral-900/90 p-2 rounded-lg border border-neutral-800">
                                 <div class="flex items-center space-x-2">
                                     ${item.image ? `<img src="${item.image}" class="w-7 h-7 rounded object-cover border border-neutral-700">` : `<div class="w-7 h-7 rounded bg-neutral-800 flex items-center justify-center text-amber-400"><i class="fa-solid fa-bottle-droplet text-xs"></i></div>`}
                                     <div>
@@ -604,19 +610,10 @@
                 const brandName = document.getElementById(`revBrand_${idx}`).value;
                 const rating = parseInt(document.getElementById(`revRating_${idx}`).value);
                 const image = ingredientReviewImages[idx] || '';
-                return {
-                    ingredientLine: ing,
-                    brandName,
-                    rating,
-                    image
-                };
+                return { ingredientLine: ing, brandName, rating, image };
             });
 
-            const newReview = {
-                date,
-                notes,
-                ingredientsRated
-            };
+            const newReview = { date, notes, ingredientsRated };
 
             if (!currentActiveDrink.reviews) currentActiveDrink.reviews = [];
             currentActiveDrink.reviews.unshift(newReview);
@@ -785,7 +782,6 @@
         function onHistoricIngredientSelected(select) {
             if (select.value) {
                 document.getElementById('shopItemName').value = select.value;
-                // Automatically run a simulated lookup price
                 document.getElementById('shopItemPrice').value = estimatePriceForItem(select.value);
             }
         }
@@ -886,12 +882,12 @@
             document.getElementById('shoppingCount').textContent = shoppingList.length;
 
             if (shoppingList.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-neutral-500 text-xs bg-neutral-950/40 rounded-xl border border-neutral-800">Your shopping list is empty. Add items above!</div>`;
+                container.innerHTML = `<div class="text-center py-8 text-neutral-400 text-xs bg-neutral-950/60 rounded-xl border border-neutral-800">Your shopping list is empty. Add items above!</div>`;
                 return;
             }
 
             container.innerHTML = shoppingList.map(item => `
-                <div class="bg-neutral-950/60 p-3 rounded-xl border border-neutral-800 flex items-center justify-between text-sm">
+                <div class="bg-neutral-950/70 p-3 rounded-xl border border-neutral-800 flex items-center justify-between text-sm">
                     <div class="flex items-center space-x-3">
                         <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleShoppingItem('${item.id}')" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
                         <span class="${item.checked ? 'line-through text-neutral-500' : 'text-white'} font-medium">${item.name}</span>
